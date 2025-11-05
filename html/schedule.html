@@ -1,0 +1,2548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyBuddy - Schedule</title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        
+        
+        html { scroll-behavior: smooth; }
+        body { overflow-x: hidden; }
+        
+        .mobile-nav-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #2d1b69 100%);
+            background-attachment: fixed;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 9999; opacity: 0; visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        
+        @supports not (backdrop-filter: blur(12px)) {
+            .mobile-nav-overlay {
+                background: linear-gradient(135deg, rgba(15, 15, 35, 0.95) 0%, rgba(26, 26, 62, 0.95) 50%, rgba(45, 27, 105, 0.95) 100%);
+            }
+        }
+        
+        
+        .mobile-nav-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(15, 15, 35, 0.3) 0%, rgba(26, 26, 62, 0.2) 50%, rgba(45, 27, 105, 0.3) 100%);
+            z-index: -1;
+        }
+        .mobile-nav-overlay.active { opacity: 1; visibility: visible; }
+        
+        .mobile-nav-menu {
+            position: fixed; top: 0; right: -320px; width: 300px; height: 100vh;
+            background: linear-gradient(180deg, #1a1a3e 0%, #2d1b69 100%);
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto; z-index: 10000;
+        }
+        .mobile-nav-overlay.active .mobile-nav-menu { right: 0; }
+        
+        .mobile-nav-header {
+            padding: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .mobile-nav-title { font-size: 1.2rem; font-weight: 600; color: #ffffff; }
+        
+        .mobile-nav-close {
+            background: none; border: none; color: #ffffff; font-size: 1.5rem;
+            cursor: pointer; padding: 8px; border-radius: 50%;
+            transition: background 0.2s ease; width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .mobile-nav-close:hover { background: rgba(255, 255, 255, 0.1); }
+        
+        .mobile-nav-list { list-style: none; padding: 0; margin: 0; }
+        .mobile-nav-item { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        .mobile-nav-link {
+            display: flex; align-items: center; padding: 18px 20px;
+            color: rgba(255, 255, 255, 0.8); text-decoration: none;
+            transition: all 0.2s ease; gap: 15px; min-height: 60px;
+        }
+        .mobile-nav-link:hover, .mobile-nav-link.active {
+            background: rgba(255, 255, 255, 0.1); color: #ffffff; transform: translateX(5px);
+        }
+        .mobile-nav-link i { font-size: 1.2rem; width: 24px; text-align: center; color: #667eea; }
+        .mobile-nav-link span { font-size: 1rem; font-weight: 500; }
+        
+        @media (max-width: 992px) {
+            .main-nav .nav-list { display: none !important; }
+            .nav-toggle {
+                display: flex !important; background: none; border: none; color: #ffffff;
+                font-size: 1.5rem; cursor: pointer; padding: 12px; border-radius: 8px;
+                transition: all 0.2s ease; width: 48px; height: 48px;
+                align-items: center; justify-content: center;
+            }
+            .nav-toggle:hover { background: rgba(255, 255, 255, 0.1); transform: scale(1.1); }
+            .mobile-nav-overlay { display: block; }
+            .site-header { flex-wrap: wrap; gap: 1rem; padding: 1rem 1.5rem; }
+        }
+        
+        @media (max-width: 768px) {
+            .page-content { padding: 1rem !important; }
+        }
+        
+        @media (max-width: 480px) {
+            .site-header { padding: 0.8rem 1rem; }
+            .mobile-nav-menu { width: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="site-container">
+        <header class="site-header">
+            <div class="logo">
+                <i class="fa-solid fa-user-graduate"></i> <h1>StudyBuddy</h1>
+            </div>
+            <p class="slogan">Collaborate. Learn. Achieve.</p>
+            
+            
+            <div class="auth-section" id="authSection">
+                <button class="btn-auth btn-login" id="loginBtn">
+                    <i class="fa-solid fa-sign-in-alt"></i>
+                    <span>Login</span>
+                </button>
+                <button class="btn-auth btn-signup" id="signupBtn">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Sign Up</span>
+                </button>
+            </div>
+
+            
+            <div class="user-section" id="userSection" style="display: none;">
+                <div class="user-profile">
+                    <img src="https://via.placeholder.com/40" alt="User Avatar">
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <span class="user-email">john@email.com</span>
+                    </div>
+                    <div class="user-dropdown">
+                        <button class="dropdown-toggle" id="userDropdown">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="profile.html" class="dropdown-item">
+                                <i class="fa-solid fa-user"></i> My Profile
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fa-solid fa-cog"></i> Settings
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fa-solid fa-bell"></i> Notifications
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item logout-item" id="logoutBtn">
+                                <i class="fa-solid fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="../index.html" class="nav-link">
+                            <i class="fa-solid fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="groups.html" class="nav-link">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Groups</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="resources.html" class="nav-link">
+                            <i class="fa-solid fa-folder"></i>
+                            <span>Resources</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="schedule.html" class="nav-link active">
+                            <i class="fa-solid fa-calendar"></i>
+                            <span>Schedule</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="profile.html" class="nav-link">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                </ul>
+                <button class="nav-toggle" id="navToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </nav>
+        </header>
+
+        
+        <div class="mobile-nav-overlay" id="mobileNavOverlay">
+            <div class="mobile-nav-menu">
+                <div class="mobile-nav-header">
+                    <span class="mobile-nav-title">StudyBuddy Menu</span>
+                    <button class="mobile-nav-close" id="mobileNavClose">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                </div>
+                
+                <ul class="mobile-nav-list">
+                    <li class="mobile-nav-item">
+                        <a href="../index.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="groups.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Groups</span>
+                        </a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="resources.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-folder"></i>
+                            <span>Resources</span>
+                        </a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="schedule.html" class="mobile-nav-link active">
+                            <i class="fa-solid fa-calendar"></i>
+                            <span>Schedule</span>
+                        </a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="profile.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <main class="dashboard">
+            <div class="page-content">
+                
+                <div class="schedule-header">
+                    <div class="schedule-title-section">
+                        <h1><i class="fa-solid fa-calendar-days"></i> Study Schedule</h1>
+                        <p class="schedule-subtitle">Manage your study sessions and stay organized</p>
+                    </div>
+                    <div class="schedule-actions">
+                        <button class="btn-view-toggle" id="viewToggleBtn">
+                            <i class="fa-solid fa-calendar-week"></i>
+                            <span class="view-text">Week View</span>
+                        </button>
+                        <button class="btn-create-session" id="createScheduleBtn">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>New Session</span>
+                        </button>
+                    </div>
+                </div>
+
+                
+                <div class="calendar-navigation">
+                    <div class="nav-controls">
+                        <button class="nav-btn" id="prevBtn">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <div class="current-period">
+                            <h2 id="currentPeriod">November 2025</h2>
+                            <button class="btn-today" id="todayBtn">Today</button>
+                        </div>
+                        <button class="nav-btn" id="nextBtn">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="view-filters">
+                        <div class="filter-group">
+                            <label>
+                                <input type="checkbox" id="filterStudy" checked>
+                                <span class="filter-label study">Study Sessions</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" id="filterMeeting" checked>
+                                <span class="filter-label meeting">Meetings</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" id="filterExam" checked>
+                                <span class="filter-label exam">Exams</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="schedule-main-container">
+                    
+                    <div class="calendar-container" id="calendarView">
+                        <div class="calendar-header">
+                            <div class="day-header">Sun</div>
+                            <div class="day-header">Mon</div>
+                            <div class="day-header">Tue</div>
+                            <div class="day-header">Wed</div>
+                            <div class="day-header">Thu</div>
+                            <div class="day-header">Fri</div>
+                            <div class="day-header">Sat</div>
+                        </div>
+                        <div class="calendar-body" id="calendarBody">
+                            
+                        </div>
+                    </div>
+
+                    
+                    <div class="schedule-list-container" id="listView" style="display: none;">
+                        <div class="upcoming-sessions-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-clock"></i> Upcoming Sessions</h3>
+                                <div class="session-count">
+                                    <span id="sessionCount">0</span> sessions this week
+                                </div>
+                            </div>
+                            <div class="session-list" id="sessionList">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="mobile-schedule-container">
+                    
+                    <div class="mobile-stats-card">
+                        <h3><i class="fa-solid fa-chart-simple"></i> This Week</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-value" id="weekSessions">0</span>
+                                <span class="stat-label">Sessions</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="weekHours">0h</span>
+                                <span class="stat-label">Study Time</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="weekCompleted">0</span>
+                                <span class="stat-label">Completed</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="weekUpcoming">0</span>
+                                <span class="stat-label">Upcoming</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="mobile-today-card">
+                        <h3><i class="fa-solid fa-calendar-day"></i> Today's Schedule</h3>
+                        <div class="today-sessions" id="todaySessions">
+                            <div class="empty-state">
+                                <i class="fa-solid fa-calendar-xmark"></i>
+                                <p>No sessions scheduled for today</p>
+                                <button class="btn-quick-add" onclick="openQuickAdd()">
+                                    <i class="fa-solid fa-plus"></i> Add Session
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="mobile-goals-card">
+                        <h3><i class="fa-solid fa-bullseye"></i> Weekly Goals</h3>
+                        <div class="goals-list" id="goalsList">
+                            <div class="goal-item">
+                                <div class="goal-info">
+                                    <span class="goal-title">Study Hours</span>
+                                    <span class="goal-progress" id="studyHoursProgress">0/25 hours</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="studyHoursBar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="goal-item">
+                                <div class="goal-info">
+                                    <span class="goal-title">Group Sessions</span>
+                                    <span class="goal-progress" id="groupSessionsProgress">0/3 sessions</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="groupSessionsBar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="goal-item">
+                                <div class="goal-info">
+                                    <span class="goal-title">Assignments</span>
+                                    <span class="goal-progress" id="assignmentsProgress">0/5 completed</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="assignmentsBar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        
+        <div class="schedule-modal-overlay" id="scheduleModal" style="display: none;">
+            <div class="schedule-modal">
+                <div class="schedule-modal-header">
+                    <h2><i class="fa-solid fa-calendar-plus"></i> <span id="modalTitle">Schedule New Session</span></h2>
+                    <button class="modal-close" id="closeScheduleModal">&times;</button>
+                </div>
+                
+                <div class="schedule-modal-body">
+                    
+                    <div class="modal-progress">
+                        <div class="progress-step active" data-step="1">
+                            <div class="step-number">1</div>
+                            <span>Type</span>
+                        </div>
+                        <div class="progress-line"></div>
+                        <div class="progress-step" data-step="2">
+                            <div class="step-number">2</div>
+                            <span>Details</span>
+                        </div>
+                    </div>
+
+                    <div class="schedule-step active" id="scheduleStep1">
+                        <h3>Choose Session Type</h3>
+                        <div class="session-type-grid">
+                            <div class="session-type-card" data-type="study">
+                                <div class="type-icon">
+                                    <i class="fa-solid fa-book-open"></i>
+                                </div>
+                                <h4>Study Session</h4>
+                                <p>Individual or group focused study time</p>
+                                <ul class="type-features">
+                                    <li><i class="fa-solid fa-check"></i> Focus Timer</li>
+                                    <li><i class="fa-solid fa-check"></i> Study Notes</li>
+                                    <li><i class="fa-solid fa-check"></i> Resource Links</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="session-type-card" data-type="meeting">
+                                <div class="type-icon">
+                                    <i class="fa-solid fa-users"></i>
+                                </div>
+                                <h4>Group Meeting</h4>
+                                <p>Collaborative discussions and planning</p>
+                                <ul class="type-features">
+                                    <li><i class="fa-solid fa-check"></i> Video Conference</li>
+                                    <li><i class="fa-solid fa-check"></i> Screen Sharing</li>
+                                    <li><i class="fa-solid fa-check"></i> Meeting Agenda</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="session-type-card" data-type="exam">
+                                <div class="type-icon">
+                                    <i class="fa-solid fa-clipboard-check"></i>
+                                </div>
+                                <h4>Exam/Test</h4>
+                                <p>Scheduled assessments and deadlines</p>
+                                <ul class="type-features">
+                                    <li><i class="fa-solid fa-check"></i> Countdown Timer</li>
+                                    <li><i class="fa-solid fa-check"></i> Smart Reminders</li>
+                                    <li><i class="fa-solid fa-check"></i> Prep Checklist</li>
+                                </ul>
+                            </div>
+
+                            <div class="session-type-card" data-type="assignment">
+                                <div class="type-icon">
+                                    <i class="fa-solid fa-tasks"></i>
+                                </div>
+                                <h4>Assignment</h4>
+                                <p>Project work and homework deadlines</p>
+                                <ul class="type-features">
+                                    <li><i class="fa-solid fa-check"></i> Due Date Tracking</li>
+                                    <li><i class="fa-solid fa-check"></i> Progress Updates</li>
+                                    <li><i class="fa-solid fa-check"></i> File Attachments</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="step-actions">
+                            <button class="btn btn-next" id="nextStepBtn" disabled>
+                                Next <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="schedule-step" id="scheduleStep2">
+                        <div class="selected-type-display">
+                            <div class="selected-icon">
+                                <i id="selectedTypeIcon" class="fa-solid fa-calendar"></i>
+                            </div>
+                            <div class="selected-info">
+                                <h4 id="selectedTypeName">Session Type</h4>
+                                <p id="selectedTypeDesc">Session description</p>
+                            </div>
+                        </div>
+                        
+                        <form class="enhanced-schedule-form" id="scheduleForm">
+                            <div class="form-section">
+                                <h4><i class="fa-solid fa-info-circle"></i> Basic Information</h4>
+                                <div class="form-row">
+                                    <div class="form-group full-width">
+                                        <label for="sessionTitle">
+                                            <i class="fa-solid fa-heading"></i> Session Title *
+                                        </label>
+                                        <input type="text" id="sessionTitle" placeholder="Enter a descriptive title" required>
+                                        <div class="field-hint">Make it clear and specific</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="sessionSubject">
+                                            <i class="fa-solid fa-book"></i> Subject *
+                                        </label>
+                                        <select id="sessionSubject" required>
+                                            <option value="">Choose Subject</option>
+                                            <option value="mathematics">Mathematics</option>
+                                            <option value="physics">Physics</option>
+                                            <option value="chemistry">Chemistry</option>
+                                            <option value="engineering">Engineering</option>
+                                            <option value="computer-science">Computer Science</option>
+                                            <option value="biology">Biology</option>
+                                            <option value="literature">Literature</option>
+                                            <option value="history">History</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="sessionPriority">
+                                            <i class="fa-solid fa-flag"></i> Priority
+                                        </label>
+                                        <select id="sessionPriority">
+                                            <option value="medium">Medium</option>
+                                            <option value="low">Low</option>
+                                            <option value="high">High</option>
+                                            <option value="urgent">Urgent</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h4><i class="fa-solid fa-clock"></i> Schedule & Duration</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="sessionDate">
+                                            <i class="fa-solid fa-calendar-day"></i> Date *
+                                        </label>
+                                        <input type="date" id="sessionDate" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="sessionTime">
+                                            <i class="fa-solid fa-clock"></i> Start Time *
+                                        </label>
+                                        <input type="time" id="sessionTime" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="sessionDuration">
+                                            <i class="fa-solid fa-hourglass-half"></i> Duration *
+                                        </label>
+                                        <select id="sessionDuration" required>
+                                            <option value="">Select Duration</option>
+                                            <option value="15">15 minutes</option>
+                                            <option value="30">30 minutes</option>
+                                            <option value="45">45 minutes</option>
+                                            <option value="60">1 hour</option>
+                                            <option value="90">1.5 hours</option>
+                                            <option value="120">2 hours</option>
+                                            <option value="180">3 hours</option>
+                                            <option value="240">4 hours</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="customDurationGroup" style="display: none;">
+                                    <label for="customDuration">
+                                        <i class="fa-solid fa-stopwatch"></i> Custom Duration (minutes)
+                                    </label>
+                                    <input type="number" id="customDuration" min="5" max="720" placeholder="Enter duration in minutes">
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h4><i class="fa-solid fa-map-marker-alt"></i> Location & Group</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="sessionLocation">
+                                            <i class="fa-solid fa-location-dot"></i> Location/Platform
+                                        </label>
+                                        <select id="sessionLocation">
+                                            <option value="">Select Location</option>
+                                            <optgroup label="Online Platforms">
+                                                <option value="zoom">Zoom Meeting</option>
+                                                <option value="teams">Microsoft Teams</option>
+                                                <option value="meet">Google Meet</option>
+                                                <option value="discord">Discord</option>
+                                                <option value="skype">Skype</option>
+                                            </optgroup>
+                                            <optgroup label="Physical Locations">
+                                                <option value="library">University Library</option>
+                                                <option value="classroom">Classroom</option>
+                                                <option value="study-room">Study Room</option>
+                                                <option value="home">Home</option>
+                                                <option value="cafe">Coffee Shop/Cafe</option>
+                                            </optgroup>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="sessionGroup">
+                                            <i class="fa-solid fa-users"></i> Study Group
+                                        </label>
+                                        <select id="sessionGroup">
+                                            <option value="">Individual Session</option>
+                                            <option value="thermo-titans">Thermo Titans</option>
+                                            <option value="circuit-sorcerers">Circuit Sorcerers</option>
+                                            <option value="code-masters">Code Masters</option>
+                                            <option value="math-wizards">Math Wizards</option>
+                                            <option value="bio-buds">Bio Buds</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="customLocationGroup" style="display: none;">
+                                    <label for="customLocation">
+                                        <i class="fa-solid fa-edit"></i> Custom Location
+                                    </label>
+                                    <input type="text" id="customLocation" placeholder="Enter custom location or meeting link">
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h4><i class="fa-solid fa-align-left"></i> Additional Details</h4>
+                                <div class="form-group">
+                                    <label for="sessionDescription">Description & Notes</label>
+                                    <textarea id="sessionDescription" rows="4" placeholder="Add session goals, agenda, preparation notes, or any other details..."></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label><i class="fa-solid fa-bell"></i> Reminder Notifications</label>
+                                    <div class="reminder-grid">
+                                        <label class="reminder-option">
+                                            <input type="checkbox" id="remind5min">
+                                            <div class="reminder-card">
+                                                <i class="fa-solid fa-bell"></i>
+                                                <span>5 minutes before</span>
+                                            </div>
+                                        </label>
+                                        <label class="reminder-option">
+                                            <input type="checkbox" id="remind15min" checked>
+                                            <div class="reminder-card">
+                                                <i class="fa-solid fa-bell"></i>
+                                                <span>15 minutes before</span>
+                                            </div>
+                                        </label>
+                                        <label class="reminder-option">
+                                            <input type="checkbox" id="remind1hour">
+                                            <div class="reminder-card">
+                                                <i class="fa-solid fa-clock"></i>
+                                                <span>1 hour before</span>
+                                            </div>
+                                        </label>
+                                        <label class="reminder-option">
+                                            <input type="checkbox" id="remind1day">
+                                            <div class="reminder-card">
+                                                <i class="fa-solid fa-calendar-day"></i>
+                                                <span>1 day before</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="recurring-toggle">
+                                        <input type="checkbox" id="isRecurring">
+                                        <div class="toggle-switch"></div>
+                                        <span><i class="fa-solid fa-repeat"></i> Make this a recurring session</span>
+                                    </label>
+                                    
+                                    <div id="recurringDetails" class="recurring-details" style="display: none;">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="recurringFrequency">Repeat</label>
+                                                <select id="recurringFrequency">
+                                                    <option value="daily">Daily</option>
+                                                    <option value="weekly">Weekly</option>
+                                                    <option value="biweekly">Every 2 weeks</option>
+                                                    <option value="monthly">Monthly</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="recurringEnd">End Date</label>
+                                                <input type="date" id="recurringEnd">
+                                                <div class="field-hint">Leave blank for no end date</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="step-actions">
+                            <button class="btn btn-secondary" id="scheduleBackBtn">
+                                <i class="fa-solid fa-arrow-left"></i> Back
+                            </button>
+                            <button class="btn btn-primary" id="createScheduleSubmit" disabled>
+                                <i class="fa-solid fa-calendar-plus"></i> Create Session
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="session-details-modal-overlay" id="sessionDetailsModal" style="display: none;">
+            <div class="session-details-modal">
+                <div class="session-details-header">
+                    <div class="session-type-indicator" id="detailsSessionType">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div class="session-title-info">
+                        <h2 id="detailsSessionTitle">Session Title</h2>
+                        <div class="session-meta">
+                            <span id="detailsSessionSubject">Subject</span>
+                            <span class="meta-separator">•</span>
+                            <span id="detailsSessionDate">Date & Time</span>
+                        </div>
+                    </div>
+                    <div class="session-actions">
+                        <button class="action-btn edit-btn" id="editSessionBtn" title="Edit Session">
+                            <i class="fa-solid fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete-btn" id="deleteSessionBtn" title="Delete Session">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                        <button class="modal-close" id="closeDetailsModal">&times;</button>
+                    </div>
+                </div>
+                
+                <div class="session-details-body">
+                    <div class="details-grid">
+                        <div class="detail-section">
+                            <h4><i class="fa-solid fa-info-circle"></i> Session Information</h4>
+                            <div class="detail-item">
+                                <span class="detail-label">Duration:</span>
+                                <span class="detail-value" id="detailsDuration">--</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Priority:</span>
+                                <span class="detail-value priority-badge" id="detailsPriority">--</span>
+                            </div>
+                            <div class="detail-item" id="detailsGroupItem" style="display: none;">
+                                <span class="detail-label">Study Group:</span>
+                                <span class="detail-value" id="detailsGroup">--</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h4><i class="fa-solid fa-map-marker-alt"></i> Location</h4>
+                            <div class="detail-item">
+                                <span class="detail-value" id="detailsLocation">--</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section" id="detailsDescSection" style="display: none;">
+                            <h4><i class="fa-solid fa-align-left"></i> Description</h4>
+                            <div class="detail-content" id="detailsDescription">
+                                --
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h4><i class="fa-solid fa-bell"></i> Reminders</h4>
+                            <div class="reminders-list" id="detailsReminders">
+                                <span class="no-reminders">No reminders set</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        class ScheduleManager {
+            constructor() {
+                this.sessions = this.loadSessions();
+                this.currentDate = new Date();
+                this.currentView = 'calendar'; 
+                this.selectedSessionType = null;
+                this.selectedMobileSession = null; 
+                this.isEditMode = false;
+                this.editingSessionId = null;
+                
+                this.init();
+                this.renderCalendar();
+                this.updateStats();
+                this.bindEvents();
+            }
+            
+            init() {
+                
+                const dateInput = document.getElementById('sessionDate');
+                if (dateInput) {
+                    const tomorrow = new Date(this.currentDate);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    dateInput.value = tomorrow.toISOString().split('T')[0];
+                }
+                
+                
+                const timeInput = document.getElementById('sessionTime');
+                if (timeInput) {
+                    const defaultTime = new Date();
+                    defaultTime.setHours(defaultTime.getHours() + 2, 0, 0, 0);
+                    timeInput.value = defaultTime.toTimeString().slice(0, 5);
+                }
+                
+                this.updateCurrentPeriod();
+            }
+            
+            bindEvents() {
+                
+                const viewToggleBtn = document.getElementById('viewToggleBtn');
+                if (viewToggleBtn) {
+                    viewToggleBtn.addEventListener('click', () => this.toggleView());
+                }
+                
+                
+                document.getElementById('prevBtn')?.addEventListener('click', () => this.navigatePeriod(-1));
+                document.getElementById('nextBtn')?.addEventListener('click', () => this.navigatePeriod(1));
+                document.getElementById('todayBtn')?.addEventListener('click', () => this.goToToday());
+                
+                
+                document.getElementById('createScheduleBtn')?.addEventListener('click', () => this.openScheduleModal());
+                document.getElementById('closeScheduleModal')?.addEventListener('click', () => this.closeScheduleModal());
+                
+                
+                document.getElementById('nextStepBtn')?.addEventListener('click', () => this.nextStep());
+                document.getElementById('scheduleBackBtn')?.addEventListener('click', () => this.previousStep());
+                
+                
+                document.querySelectorAll('.session-type-card').forEach(card => {
+                    card.addEventListener('click', () => this.selectSessionType(card.dataset.type));
+                });
+                
+                
+                document.getElementById('createScheduleSubmit')?.addEventListener('click', () => this.submitSession());
+                
+                
+                this.setupFormValidation();
+                
+                
+                document.querySelectorAll('[id^="filter"]').forEach(checkbox => {
+                    checkbox.addEventListener('change', () => this.applyFilters());
+                });
+                
+                
+                this.setupMobileInteractions();
+                
+                
+                document.getElementById('scheduleModal')?.addEventListener('click', (e) => {
+                    if (e.target.id === 'scheduleModal') this.closeScheduleModal();
+                });
+                
+                
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeScheduleModal();
+                        this.closeSessionDetails();
+                    }
+                });
+            }
+            
+            setupMobileInteractions() {
+                
+                let touchStartX = 0;
+                let touchEndX = 0;
+                
+                const calendarBody = document.getElementById('calendarBody');
+                if (calendarBody) {
+                    calendarBody.addEventListener('touchstart', (e) => {
+                        touchStartX = e.changedTouches[0].screenX;
+                    });
+                    
+                    calendarBody.addEventListener('touchend', (e) => {
+                        touchEndX = e.changedTouches[0].screenX;
+                        this.handleSwipe();
+                    });
+                }
+                
+                
+                window.openQuickAdd = () => this.openScheduleModal();
+            }
+            
+            handleSwipe() {
+                const swipeThreshold = 50;
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        
+                        this.navigatePeriod(1);
+                    } else {
+                        
+                        this.navigatePeriod(-1);
+                    }
+                }
+            }
+            
+            toggleView() {
+                this.currentView = this.currentView === 'calendar' ? 'list' : 'calendar';
+                
+                const calendarView = document.getElementById('calendarView');
+                const listView = document.getElementById('listView');
+                const viewToggleBtn = document.getElementById('viewToggleBtn');
+                const viewText = viewToggleBtn.querySelector('.view-text');
+                const viewIcon = viewToggleBtn.querySelector('i');
+                
+                if (this.currentView === 'calendar') {
+                    calendarView.style.display = 'block';
+                    listView.style.display = 'none';
+                    viewText.textContent = 'List View';
+                    viewIcon.className = 'fa-solid fa-list';
+                } else {
+                    calendarView.style.display = 'none';
+                    listView.style.display = 'block';
+                    viewText.textContent = 'Calendar View';
+                    viewIcon.className = 'fa-solid fa-calendar-week';
+                    this.renderSessionList();
+                }
+                
+                viewToggleBtn.classList.toggle('active');
+            }
+            
+            navigatePeriod(direction) {
+                this.currentDate.setMonth(this.currentDate.getMonth() + direction);
+                this.updateCurrentPeriod();
+                this.renderCalendar();
+            }
+            
+            goToToday() {
+                this.currentDate = new Date();
+                this.updateCurrentPeriod();
+                this.renderCalendar();
+            }
+            
+            updateCurrentPeriod() {
+                const periodElement = document.getElementById('currentPeriod');
+                if (periodElement) {
+                    const options = { year: 'numeric', month: 'long' };
+                    periodElement.textContent = this.currentDate.toLocaleDateString('en-US', options);
+                }
+            }
+            
+            renderCalendar() {
+                const calendarBody = document.getElementById('calendarBody');
+                if (!calendarBody) return;
+                
+                calendarBody.innerHTML = '';
+                
+                const year = this.currentDate.getFullYear();
+                const month = this.currentDate.getMonth();
+                
+                
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const startDate = new Date(firstDay);
+                startDate.setDate(startDate.getDate() - firstDay.getDay());
+                
+                
+                for (let i = 0; i < 42; i++) {
+                    const date = new Date(startDate);
+                    date.setDate(startDate.getDate() + i);
+                    
+                    const dayElement = this.createCalendarDay(date, month);
+                    calendarBody.appendChild(dayElement);
+                }
+            }
+            
+            createCalendarDay(date, currentMonth) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                
+                const isCurrentMonth = date.getMonth() === currentMonth;
+                const isToday = this.isSameDay(date, new Date());
+                const dayKey = this.getDateKey(date);
+                const daySessions = this.sessions.filter(session => 
+                    this.getDateKey(new Date(session.date)) === dayKey
+                );
+                
+                if (!isCurrentMonth) {
+                    dayElement.classList.add('other-month');
+                }
+                
+                if (isToday) {
+                    dayElement.classList.add('today');
+                }
+                
+                if (daySessions.length > 0) {
+                    dayElement.classList.add('has-sessions');
+                }
+                
+                dayElement.innerHTML = `
+                    <div class="day-number">${date.getDate()}</div>
+                    <div class="day-sessions">
+                        ${daySessions.slice(0, 3).map(session => `
+                            <div class="session-indicator ${session.type}" data-session-id="${session.id}">
+                                <span class="session-title">${session.title}</span>
+                                <button class="session-delete-btn" data-session-id="${session.id}" title="Delete Session">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                        ${daySessions.length > 3 ? `
+                            <div class="more-sessions">+${daySessions.length - 3} more</div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                
+                dayElement.addEventListener('click', () => this.selectDate(date));
+                dayElement.querySelectorAll('.session-indicator').forEach(indicator => {
+                    indicator.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        
+                        if (!e.target.closest('.session-delete-btn')) {
+                            this.showSessionDetails(indicator.dataset.sessionId);
+                        }
+                    });
+                });
+                
+                
+                dayElement.querySelectorAll('.session-delete-btn').forEach(deleteBtn => {
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        const sessionId = deleteBtn.dataset.sessionId;
+                        this.confirmDeleteSession(sessionId);
+                    });
+                });
+                
+                return dayElement;
+            }
+            
+            selectDate(date) {
+                
+                const dateInput = document.getElementById('sessionDate');
+                if (dateInput) {
+                    dateInput.value = date.toISOString().split('T')[0];
+                }
+                this.openScheduleModal();
+            }
+            
+            renderSessionList() {
+                const sessionList = document.getElementById('sessionList');
+                const sessionCount = document.getElementById('sessionCount');
+                if (!sessionList) return;
+                
+                const weekStart = this.getWeekStart(this.currentDate);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+                
+                const weekSessions = this.sessions.filter(session => {
+                    const sessionDate = new Date(session.date);
+                    return sessionDate >= weekStart && sessionDate <= weekEnd;
+                });
+                
+                if (sessionCount) {
+                    sessionCount.textContent = weekSessions.length;
+                }
+                
+                if (weekSessions.length === 0) {
+                    sessionList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-calendar-xmark"></i>
+                            <p>No sessions scheduled this week</p>
+                            <button class="btn-quick-add" onclick="scheduleManager.openScheduleModal()">
+                                <i class="fa-solid fa-plus"></i> Schedule Session
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                
+                weekSessions.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+                
+                sessionList.innerHTML = weekSessions.map(session => this.createSessionListItem(session)).join('');
+                
+                
+                sessionList.querySelectorAll('.session-item').forEach(item => {
+                    item.addEventListener('click', () => this.showSessionDetails(item.dataset.sessionId));
+                });
+            }
+            
+            createSessionListItem(session) {
+                const sessionDate = new Date(session.date + ' ' + session.time);
+                const now = new Date();
+                const isUpcoming = sessionDate > now;
+                const isPast = sessionDate < now;
+                const isToday = this.isSameDay(sessionDate, now);
+                
+                return `
+                    <div class="session-item ${session.type}" data-session-id="${session.id}">
+                        <div class="session-time">
+                            <span class="time">${this.formatTime(session.time)}</span>
+                            <span class="date">${this.formatDateShort(session.date)}</span>
+                        </div>
+                        <div class="session-info">
+                            <h4>${session.title}</h4>
+                            <p>${session.subject}${session.group ? ' • ' + session.group : ''}</p>
+                            <div class="session-meta">
+                                <span class="session-type ${session.type}">
+                                    <i class="fa-solid fa-${this.getSessionIcon(session.type)}"></i>
+                                    ${this.capitalize(session.type)}
+                                </span>
+                                <span class="session-priority ${session.priority}">
+                                    ${this.capitalize(session.priority)}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="session-actions">
+                            <button class="btn-join-session ${isPast ? 'past' : isUpcoming ? 'upcoming' : ''}">
+                                ${isPast ? 'Past' : isToday ? 'Join' : 'RSVP'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            openScheduleModal() {
+                const modal = document.getElementById('scheduleModal');
+                const modalTitle = document.getElementById('modalTitle');
+                
+                if (this.isEditMode) {
+                    modalTitle.textContent = 'Edit Session';
+                } else {
+                    modalTitle.textContent = 'Schedule New Session';
+                    this.resetForm();
+                }
+                
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                
+                
+                this.showStep(1);
+            }
+            
+            closeScheduleModal() {
+                const modal = document.getElementById('scheduleModal');
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                
+                
+                this.resetForm();
+                this.isEditMode = false;
+                this.editingSessionId = null;
+                this.selectedSessionType = null;
+            }
+            
+            resetForm() {
+                const form = document.getElementById('scheduleForm');
+                if (form) {
+                    form.reset();
+                }
+                
+                
+                document.querySelectorAll('.session-type-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                
+                
+                document.querySelectorAll('.progress-step').forEach((step, index) => {
+                    step.classList.toggle('active', index === 0);
+                });
+                
+                
+                this.init();
+            }
+            
+            showStep(stepNumber) {
+                document.querySelectorAll('.schedule-step').forEach((step, index) => {
+                    step.classList.toggle('active', index === stepNumber - 1);
+                });
+                
+                document.querySelectorAll('.progress-step').forEach((step, index) => {
+                    step.classList.toggle('active', index < stepNumber);
+                });
+            }
+            
+            selectSessionType(type) {
+                this.selectedSessionType = type;
+                
+                
+                document.querySelectorAll('.session-type-card').forEach(card => {
+                    card.classList.toggle('selected', card.dataset.type === type);
+                });
+                
+                
+                this.updateSelectedTypeDisplay(type);
+                
+                
+                const nextBtn = document.getElementById('nextStepBtn');
+                if (nextBtn) {
+                    nextBtn.disabled = false;
+                }
+            }
+            
+            updateSelectedTypeDisplay(type) {
+                const typeData = {
+                    study: { icon: 'fa-book-open', name: 'Study Session', desc: 'Individual or group focused study time' },
+                    meeting: { icon: 'fa-users', name: 'Group Meeting', desc: 'Collaborative discussions and planning' },
+                    exam: { icon: 'fa-clipboard-check', name: 'Exam/Test', desc: 'Scheduled assessments and deadlines' },
+                    assignment: { icon: 'fa-tasks', name: 'Assignment', desc: 'Project work and homework deadlines' }
+                };
+                
+                const data = typeData[type];
+                if (data) {
+                    document.getElementById('selectedTypeIcon').className = `fa-solid ${data.icon}`;
+                    document.getElementById('selectedTypeName').textContent = data.name;
+                    document.getElementById('selectedTypeDesc').textContent = data.desc;
+                }
+            }
+            
+            nextStep() {
+                if (this.selectedSessionType) {
+                    this.showStep(2);
+                }
+            }
+            
+            previousStep() {
+                this.showStep(1);
+            }
+            
+            setupFormValidation() {
+                const form = document.getElementById('scheduleForm');
+                if (!form) return;
+                
+                const requiredFields = form.querySelectorAll('[required]');
+                const submitBtn = document.getElementById('createScheduleSubmit');
+                
+                const validateForm = () => {
+                    const isValid = Array.from(requiredFields).every(field => field.value.trim());
+                    if (submitBtn) {
+                        submitBtn.disabled = !isValid;
+                    }
+                };
+                
+                requiredFields.forEach(field => {
+                    field.addEventListener('input', validateForm);
+                    field.addEventListener('change', validateForm);
+                });
+                
+                
+                const durationSelect = document.getElementById('sessionDuration');
+                const customDurationGroup = document.getElementById('customDurationGroup');
+                
+                if (durationSelect && customDurationGroup) {
+                    durationSelect.addEventListener('change', () => {
+                        const showCustom = durationSelect.value === 'custom';
+                        customDurationGroup.style.display = showCustom ? 'block' : 'none';
+                        
+                        if (showCustom) {
+                            const customInput = document.getElementById('customDuration');
+                            if (customInput) customInput.required = true;
+                        }
+                    });
+                }
+                
+                
+                const locationSelect = document.getElementById('sessionLocation');
+                const customLocationGroup = document.getElementById('customLocationGroup');
+                
+                if (locationSelect && customLocationGroup) {
+                    locationSelect.addEventListener('change', () => {
+                        const showCustom = locationSelect.value === 'other';
+                        customLocationGroup.style.display = showCustom ? 'block' : 'none';
+                    });
+                }
+                
+                
+                const recurringCheckbox = document.getElementById('isRecurring');
+                const recurringDetails = document.getElementById('recurringDetails');
+                
+                if (recurringCheckbox && recurringDetails) {
+                    recurringCheckbox.addEventListener('change', () => {
+                        recurringDetails.style.display = recurringCheckbox.checked ? 'block' : 'none';
+                    });
+                }
+            }
+            
+            submitSession() {
+                if (!this.selectedSessionType) return;
+                
+                const formData = new FormData(document.getElementById('scheduleForm'));
+                const session = {
+                    id: this.isEditMode ? this.editingSessionId : 'session_' + Date.now(),
+                    type: this.selectedSessionType,
+                    title: formData.get('sessionTitle') || document.getElementById('sessionTitle').value,
+                    subject: formData.get('sessionSubject') || document.getElementById('sessionSubject').value,
+                    date: formData.get('sessionDate') || document.getElementById('sessionDate').value,
+                    time: formData.get('sessionTime') || document.getElementById('sessionTime').value,
+                    duration: this.getDuration(),
+                    priority: document.getElementById('sessionPriority').value || 'medium',
+                    location: this.getLocation(),
+                    group: document.getElementById('sessionGroup').value || '',
+                    description: document.getElementById('sessionDescription').value || '',
+                    reminders: this.getReminders(),
+                    recurring: document.getElementById('isRecurring').checked,
+                    createdAt: new Date().toISOString()
+                };
+                
+                if (this.isEditMode) {
+                    this.updateSession(session);
+                } else {
+                    this.addSession(session);
+                }
+                
+                this.closeScheduleModal();
+                this.renderCalendar();
+                this.updateStats();
+                
+                
+                this.showNotification(`Session ${this.isEditMode ? 'updated' : 'created'} successfully!`, 'success');
+            }
+            
+            getDuration() {
+                const durationSelect = document.getElementById('sessionDuration');
+                if (durationSelect.value === 'custom') {
+                    return document.getElementById('customDuration').value;
+                }
+                return durationSelect.value;
+            }
+            
+            getLocation() {
+                const locationSelect = document.getElementById('sessionLocation');
+                if (locationSelect.value === 'other') {
+                    return document.getElementById('customLocation').value || 'Other';
+                }
+                return locationSelect.value;
+            }
+            
+            getReminders() {
+                const reminders = [];
+                if (document.getElementById('remind5min').checked) reminders.push('5min');
+                if (document.getElementById('remind15min').checked) reminders.push('15min');
+                if (document.getElementById('remind1hour').checked) reminders.push('1hour');
+                if (document.getElementById('remind1day').checked) reminders.push('1day');
+                return reminders;
+            }
+            
+            addSession(session) {
+                this.sessions.push(session);
+                this.saveSessions();
+            }
+            
+            updateSession(session) {
+                const index = this.sessions.findIndex(s => s.id === session.id);
+                if (index !== -1) {
+                    this.sessions[index] = session;
+                    this.saveSessions();
+                }
+            }
+            
+            confirmDeleteSession(sessionId) {
+                const session = this.sessions.find(s => s.id === sessionId);
+                if (!session) return;
+                
+                
+                const confirmDialog = document.createElement('div');
+                confirmDialog.className = 'delete-confirmation-overlay';
+                confirmDialog.innerHTML = `
+                    <div class="delete-confirmation-modal">
+                        <div class="delete-confirmation-header">
+                            <h3><i class="fa-solid fa-exclamation-triangle"></i> Confirm Delete</h3>
+                        </div>
+                        <div class="delete-confirmation-body">
+                            <p>Are you sure you want to delete this session?</p>
+                            <div class="session-preview">
+                                <strong>${session.title}</strong><br>
+                                <span>${this.formatDateShort(session.date)} at ${this.formatTime(session.time)}</span><br>
+                                <span class="duration">${session.duration} minutes</span>
+                            </div>
+                            <p class="warning-text"><i class="fa-solid fa-warning"></i> This action cannot be undone.</p>
+                        </div>
+                        <div class="delete-confirmation-actions">
+                            <button class="btn btn-secondary cancel-delete">Cancel</button>
+                            <button class="btn btn-danger confirm-delete">
+                                <i class="fa-solid fa-trash"></i> Delete Session
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(confirmDialog);
+                
+                
+                confirmDialog.querySelector('.cancel-delete').addEventListener('click', () => {
+                    document.body.removeChild(confirmDialog);
+                });
+                
+                confirmDialog.querySelector('.confirm-delete').addEventListener('click', () => {
+                    this.deleteSession(sessionId);
+                    document.body.removeChild(confirmDialog);
+                    this.closeSessionDetails(); 
+                });
+                
+                
+                confirmDialog.addEventListener('click', (e) => {
+                    if (e.target === confirmDialog) {
+                        document.body.removeChild(confirmDialog);
+                    }
+                });
+                
+                
+                this.addDeleteConfirmationStyles();
+            }
+            
+            deleteSession(sessionId) {
+                this.sessions = this.sessions.filter(s => s.id !== sessionId);
+                
+                
+                if (this.selectedMobileSession === sessionId) {
+                    this.selectedMobileSession = null;
+                }
+                
+                this.saveSessions();
+                this.renderCalendar();
+                this.updateTodaySessions(this.getTodaySessions());
+                this.updateStats();
+                this.showNotification('Session deleted successfully!', 'success');
+            }
+            
+            updateStats() {
+                const now = new Date();
+                const weekStart = this.getWeekStart(now);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+                
+                const weekSessions = this.sessions.filter(session => {
+                    const sessionDate = new Date(session.date);
+                    return sessionDate >= weekStart && sessionDate <= weekEnd;
+                });
+                
+                const todaySessions = this.sessions.filter(session => 
+                    this.isSameDay(new Date(session.date), now)
+                );
+                
+                const completedSessions = weekSessions.filter(session => {
+                    const sessionDateTime = new Date(session.date + ' ' + session.time);
+                    return sessionDateTime < now;
+                });
+                
+                const upcomingSessions = weekSessions.filter(session => {
+                    const sessionDateTime = new Date(session.date + ' ' + session.time);
+                    return sessionDateTime >= now;
+                });
+                
+                
+                const totalHours = weekSessions.reduce((total, session) => {
+                    return total + (parseInt(session.duration) || 0);
+                }, 0);
+                
+                
+                this.updateElement('weekSessions', weekSessions.length);
+                this.updateElement('weekHours', Math.floor(totalHours / 60) + 'h');
+                this.updateElement('weekCompleted', completedSessions.length);
+                this.updateElement('weekUpcoming', upcomingSessions.length);
+                
+                
+                this.updateGoals(totalHours, weekSessions.length, completedSessions.length);
+                
+                
+                this.updateTodaySessions(todaySessions);
+            }
+            
+            updateGoals(totalHours, sessionCount, completedCount) {
+                const studyHoursGoal = 25 * 60; 
+                const groupSessionsGoal = 3;
+                const assignmentsGoal = 5;
+                
+                const studyProgress = Math.min((totalHours / studyHoursGoal) * 100, 100);
+                const groupProgress = Math.min((sessionCount / groupSessionsGoal) * 100, 100);
+                const assignmentProgress = Math.min((completedCount / assignmentsGoal) * 100, 100);
+                
+                this.updateElement('studyHoursProgress', `${Math.floor(totalHours / 60)}/${Math.floor(studyHoursGoal / 60)} hours`);
+                this.updateElement('groupSessionsProgress', `${sessionCount}/${groupSessionsGoal} sessions`);
+                this.updateElement('assignmentsProgress', `${completedCount}/${assignmentsGoal} completed`);
+                
+                this.updateProgressBar('studyHoursBar', studyProgress);
+                this.updateProgressBar('groupSessionsBar', groupProgress);
+                this.updateProgressBar('assignmentsBar', assignmentProgress);
+            }
+            
+            updateTodaySessions(todaySessions) {
+                const container = document.getElementById('todaySessions');
+                if (!container) return;
+                
+                if (todaySessions.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-calendar-xmark"></i>
+                            <p>No sessions scheduled for today</p>
+                            <button class="btn-quick-add" onclick="scheduleManager.openScheduleModal()">
+                                <i class="fa-solid fa-plus"></i> Add Session
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                
+                const sortedSessions = [...todaySessions].sort((a, b) => 
+                    new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time)
+                );
+                
+                container.innerHTML = sortedSessions.map((session, index) => {
+                    const isSelected = this.selectedMobileSession === session.id ? 'selected' : '';
+                    return `
+                        <div class="session-item ${session.type} ${isSelected}" 
+                             id="session-${session.id}" 
+                             data-session-id="${session.id}"
+                             data-session-time="${session.time}"
+                             onclick="scheduleManager.selectMobileSession('${session.id}')">
+                            <div class="session-time">
+                                <span class="time">${this.formatTime(session.time)}</span>
+                                <span class="session-order">${index + 1}</span>
+                            </div>
+                            <div class="session-info">
+                                <h4>${session.title}</h4>
+                                <p>${session.subject}</p>
+                            </div>
+                            <button class="mobile-session-delete" onclick="event.stopPropagation(); scheduleManager.confirmDeleteSession('${session.id}')" title="Delete Session">
+                                <i class="fa-solid fa-times"></i>
+                                <span style="display: none;">×</span>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            
+            loadSessions() {
+                try {
+                    const saved = localStorage.getItem('studyBuddySessions');
+                    return saved ? JSON.parse(saved) : this.getDefaultSessions();
+                } catch (e) {
+                    console.error('Error loading sessions:', e);
+                    return this.getDefaultSessions();
+                }
+            }
+            
+            saveSessions() {
+                try {
+                    localStorage.setItem('studyBuddySessions', JSON.stringify(this.sessions));
+                } catch (e) {
+                    console.error('Error saving sessions:', e);
+                }
+            }
+            
+            getDefaultSessions() {
+                const today = new Date();
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                
+                
+                const dayAfterTomorrow = new Date(tomorrow);
+                dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1);
+                
+                const nextWeek = new Date(today);
+                nextWeek.setDate(nextWeek.getDate() + 7);
+                
+                const nextMonday = new Date(today);
+                const daysUntilMonday = (1 - today.getDay() + 7) % 7 || 7;
+                nextMonday.setDate(today.getDate() + daysUntilMonday);
+
+                return [
+                    {
+                        id: 'session_1',
+                        type: 'study',
+                        title: 'Advanced Calculus - Integration Techniques',
+                        subject: 'mathematics',
+                        date: today.toISOString().split('T')[0],
+                        time: '14:00',
+                        duration: '180',
+                        priority: 'high',
+                        location: 'Central Library - Study Room 3A',
+                        group: '',
+                        description: 'Deep dive into integration by parts, partial fractions, and trigonometric substitutions. Prepare for midterm exam.',
+                        reminders: ['30min', '15min'],
+                        recurring: false,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'session_2',
+                        type: 'meeting',
+                        title: 'Organic Chemistry Lab Group',
+                        subject: 'chemistry',
+                        date: today.toISOString().split('T')[0],
+                        time: '18:30',
+                        duration: '120',
+                        priority: 'medium',
+                        location: 'Chemistry Building - Lab 201',
+                        group: 'ChemLab Warriors',
+                        description: 'Synthesis of aspirin lab discussion and report preparation. Review spectroscopy data.',
+                        reminders: ['1hour', '15min'],
+                        recurring: true,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'session_3',
+                        type: 'exam',
+                        title: 'Physics Midterm - Thermodynamics',
+                        subject: 'physics',
+                        date: tomorrow.toISOString().split('T')[0],
+                        time: '10:00',
+                        duration: '150',
+                        priority: 'urgent',
+                        location: 'Physics Hall - Room 105',
+                        group: '',
+                        description: 'Comprehensive midterm covering heat engines, entropy, and statistical mechanics.',
+                        reminders: ['1day', '2hour', '30min'],
+                        recurring: false,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'session_4',
+                        type: 'study',
+                        title: 'Data Structures & Algorithms Practice',
+                        subject: 'computer-science',
+                        date: tomorrow.toISOString().split('T')[0],
+                        time: '16:00',
+                        duration: '240',
+                        priority: 'high',
+                        location: 'Computer Science Building - Lab 3B',
+                        group: '',
+                        description: 'Practice dynamic programming problems and graph algorithms. Prepare for coding interview.',
+                        reminders: ['1hour'],
+                        recurring: false,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'session_5',
+                        type: 'meeting',
+                        title: 'Economics Research Group',
+                        subject: 'economics',
+                        date: dayAfterTomorrow.toISOString().split('T')[0],
+                        time: '13:00',
+                        duration: '90',
+                        priority: 'medium',
+                        location: 'Economics Building - Conference Room A',
+                        group: 'Macro Analysis Team',
+                        description: 'Discuss inflation models and present quarterly research findings.',
+                        reminders: ['2hour', '30min'],
+                        recurring: true,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'session_6',
+                        type: 'project',
+                        title: 'Software Engineering Capstone',
+                        subject: 'computer-science',
+                        date: dayAfterTomorrow.toISOString().split('T')[0],
+                        time: '19:00',
+                        duration: '180',
+                        priority: 'high',
+                        location: 'Online - Discord Server',
+                        group: 'DevTeam Alpha',
+                        description: 'Sprint planning and code review for e-commerce platform project. Implement payment gateway.',
+                        reminders: ['1hour', '15min'],
+                        recurring: true,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'session_7',
+                        type: 'study',
+                        title: 'Constitutional Law Review',
+                        subject: 'law',
+                        date: nextMonday.toISOString().split('T')[0],
+                        time: '09:00',
+                        duration: '300',
+                        priority: 'high',
+                        location: 'Law Library - Quiet Study Area',
+                        group: '',
+                        description: 'Comprehensive review of landmark Supreme Court cases and constitutional principles for bar exam prep.',
+                        reminders: ['1day', '2hour'],
+                        recurring: false,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'session_8',
+                        type: 'meeting',
+                        title: 'Biology Journal Club',
+                        subject: 'biology',
+                        date: nextMonday.toISOString().split('T')[0],
+                        time: '15:30',
+                        duration: '60',
+                        priority: 'medium',
+                        location: 'Biology Building - Seminar Room 12',
+                        group: 'Bio Research Circle',
+                        description: 'Present and discuss recent papers on CRISPR gene editing applications in medicine.',
+                        reminders: ['2hour'],
+                        recurring: true,
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+            }
+            
+            updateElement(id, value) {
+                const element = document.getElementById(id);
+                if (element) element.textContent = value;
+            }
+            
+            updateProgressBar(id, percentage) {
+                const bar = document.getElementById(id);
+                if (bar) bar.style.width = percentage + '%';
+            }
+            
+            getDateKey(date) {
+                return date.toISOString().split('T')[0];
+            }
+            
+            isSameDay(date1, date2) {
+                return this.getDateKey(date1) === this.getDateKey(date2);
+            }
+            
+            getWeekStart(date) {
+                const start = new Date(date);
+                const day = start.getDay();
+                const diff = start.getDate() - day;
+                return new Date(start.setDate(diff));
+            }
+            
+            formatTime(time) {
+                return new Date('1970-01-01T' + time + 'Z').toLocaleTimeString('en-US', {
+                    timeZone: 'UTC',
+                    hour12: true,
+                    hour: 'numeric',
+                    minute: '2-digit'
+                });
+            }
+            
+            formatDateShort(dateStr) {
+                const date = new Date(dateStr);
+                const today = new Date();
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                
+                if (this.isSameDay(date, today)) return 'Today';
+                if (this.isSameDay(date, tomorrow)) return 'Tomorrow';
+                
+                return date.toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+            }
+            
+            getSessionIcon(type) {
+                const icons = {
+                    study: 'book-open',
+                    meeting: 'users',
+                    exam: 'clipboard-check',
+                    assignment: 'tasks'
+                };
+                return icons[type] || 'calendar';
+            }
+            
+            capitalize(str) {
+                return str.charAt(0).toUpperCase() + str.slice(1);
+            }
+            
+            showNotification(message, type = 'info') {
+                
+                const notification = document.createElement('div');
+                notification.className = `schedule-notification ${type}`;
+                notification.innerHTML = `
+                    <i class="fa-solid fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                `;
+                
+                
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 2rem;
+                    right: 2rem;
+                    background: ${type === 'success' ? 'linear-gradient(135deg, #10b981, #059669)' : 
+                                 type === 'error' ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 
+                                 'linear-gradient(135deg, #3b82f6, #2563eb)'};
+                    color: #ffffff;
+                    padding: 1rem 1.5rem;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                    z-index: 11000;
+                    transform: translateX(100%);
+                    transition: transform 0.3s ease;
+                    font-weight: 500;
+                `;
+                
+                document.body.appendChild(notification);
+                
+                
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+                
+                
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            }
+            
+            applyFilters() {
+                
+                const filters = {
+                    study: document.getElementById('filterStudy').checked,
+                    meeting: document.getElementById('filterMeeting').checked,
+                    exam: document.getElementById('filterExam').checked
+                };
+                
+                
+                document.querySelectorAll('.session-indicator').forEach(indicator => {
+                    const type = indicator.classList[1]; 
+                    const shouldShow = filters[type] !== false;
+                    indicator.style.display = shouldShow ? '' : 'none';
+                });
+                
+                document.querySelectorAll('.session-item').forEach(item => {
+                    const type = item.classList[1]; 
+                    const shouldShow = filters[type] !== false;
+                    item.style.display = shouldShow ? '' : 'none';
+                });
+            }
+            
+            selectMobileSession(sessionId) {
+                
+                const isMobile = window.innerWidth <= 768;
+                if (!isMobile) {
+                    
+                    this.showSessionDetails(sessionId);
+                    return;
+                }
+                
+                
+                const sessionElement = document.getElementById(`session-${sessionId}`);
+                const allSessions = document.querySelectorAll('.session-item');
+                
+                
+                const isCurrentlySelected = sessionElement.classList.contains('selected');
+                
+                if (isCurrentlySelected) {
+                    
+                    sessionElement.classList.remove('selected');
+                    this.selectedMobileSession = null;
+                } else {
+                    
+                    allSessions.forEach(session => {
+                        session.classList.remove('selected');
+                    });
+                    
+                    
+                    sessionElement.classList.add('selected');
+                    this.selectedMobileSession = sessionId;
+                    
+                    
+                    sessionElement.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                    
+                    
+                    setTimeout(() => {
+                        this.showSessionDetails(sessionId);
+                    }, 300);
+                }
+            }
+
+            showSessionDetails(sessionId) {
+                const session = this.sessions.find(s => s.id === sessionId);
+                if (!session) return;
+                
+                
+                document.getElementById('detailsSessionTitle').textContent = session.title;
+                document.getElementById('detailsSessionSubject').textContent = session.subject;
+                document.getElementById('detailsSessionDate').textContent = 
+                    `${this.formatDateShort(session.date)} at ${this.formatTime(session.time)}`;
+                
+                
+                const deleteBtn = document.getElementById('deleteSessionBtn');
+                if (deleteBtn) {
+                    
+                    deleteBtn.replaceWith(deleteBtn.cloneNode(true));
+                    const newDeleteBtn = document.getElementById('deleteSessionBtn');
+                    
+                    newDeleteBtn.addEventListener('click', () => {
+                        this.confirmDeleteSession(sessionId);
+                    });
+                }
+                
+                
+                const editBtn = document.getElementById('editSessionBtn');
+                if (editBtn) {
+                    editBtn.replaceWith(editBtn.cloneNode(true));
+                    const newEditBtn = document.getElementById('editSessionBtn');
+                    
+                    newEditBtn.addEventListener('click', () => {
+                        this.editSession(sessionId);
+                    });
+                }
+                
+                
+                const modal = document.getElementById('sessionDetailsModal');
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            addSessionDeleteButtonStyles() {
+                if (document.getElementById('session-delete-styles')) return;
+                
+                const styles = document.createElement('style');
+                styles.id = 'session-delete-styles';
+                styles.textContent = `
+                    .session-indicator {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 4px 8px;
+                        margin-bottom: 2px;
+                        border-radius: 6px;
+                        font-size: 11px;
+                        line-height: 1.2;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        background: rgba(255, 255, 255, 0.1);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                    }
+                    
+                    .session-indicator:hover {
+                        background: rgba(255, 255, 255, 0.15);
+                        transform: translateY(-1px);
+                    }
+                    
+                    .session-title {
+                        flex: 1;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+                    
+                    .session-delete-btn {
+                        background: none;
+                        border: none;
+                        color: rgba(255, 255, 255, 0.6);
+                        cursor: pointer;
+                        padding: 2px 4px;
+                        margin-left: 6px;
+                        border-radius: 3px;
+                        font-size: 10px;
+                        opacity: 0;
+                        transition: all 0.2s ease;
+                        flex-shrink: 0;
+                    }
+                    
+                    .session-indicator:hover .session-delete-btn {
+                        opacity: 1;
+                    }
+                    
+                    .session-delete-btn:hover {
+                        background: rgba(220, 38, 38, 0.8);
+                        color: white;
+                        transform: scale(1.1);
+                    }
+                    
+                    
+                    .session-indicator.study {
+                        background: rgba(59, 130, 246, 0.2);
+                        border-color: rgba(59, 130, 246, 0.3);
+                        color: #93c5fd;
+                    }
+                    
+                    .session-indicator.meeting {
+                        background: rgba(34, 197, 94, 0.2);
+                        border-color: rgba(34, 197, 94, 0.3);
+                        color: #86efac;
+                    }
+                    
+                    .session-indicator.exam {
+                        background: rgba(220, 38, 38, 0.2);
+                        border-color: rgba(220, 38, 38, 0.3);
+                        color: #fca5a5;
+                    }
+                    
+                    .session-indicator.project {
+                        background: rgba(168, 85, 247, 0.2);
+                        border-color: rgba(168, 85, 247, 0.3);
+                        color: #c4b5fd;
+                    }
+                `;
+                
+                document.head.appendChild(styles);
+            }
+            
+            addMobileSessionStyles() {
+                if (document.getElementById('mobile-session-styles')) return;
+                
+                const styles = document.createElement('style');
+                styles.id = 'mobile-session-styles';
+                styles.textContent = `
+                    
+                    @media (max-width: 768px) {
+                        .session-item {
+                            position: relative;
+                            display: flex;
+                            align-items: center;
+                            padding: 15px;
+                            margin-bottom: 12px;
+                            background: rgba(255, 255, 255, 0.05);
+                            border-radius: 12px;
+                            border-left: 4px solid transparent;
+                            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                            cursor: pointer;
+                        }
+                        
+                        .session-item:hover {
+                            background: rgba(255, 255, 255, 0.08);
+                            transform: translateY(-2px);
+                            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                        }
+                        
+                        
+                        .session-item.selected {
+                            padding: 20px;
+                            margin-bottom: 16px;
+                            background: rgba(255, 255, 255, 0.15);
+                            transform: scale(1.02) translateY(-3px);
+                            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(255, 255, 255, 0.2);
+                            z-index: 10;
+                        }
+                        
+                        .session-item.selected:hover {
+                            transform: scale(1.02) translateY(-4px);
+                            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.3);
+                        }
+                        
+                        .session-item.study {
+                            border-left-color: #3b82f6;
+                        }
+                        
+                        .session-item.meeting {
+                            border-left-color: #10b981;
+                        }
+                        
+                        .session-item.exam {
+                            border-left-color: #dc2626;
+                        }
+                        
+                        .session-item.project {
+                            border-left-color: #8b5cf6;
+                        }
+                        
+                        .session-time {
+                            position: relative;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            margin-right: 15px;
+                            min-width: 60px;
+                        }
+                        
+                        .session-time .time {
+                            font-weight: 600;
+                            font-size: 14px;
+                            color: white;
+                        }
+                        
+                        .session-order {
+                            background: rgba(255, 255, 255, 0.2);
+                            color: white;
+                            font-size: 10px;
+                            font-weight: 600;
+                            padding: 2px 6px;
+                            border-radius: 10px;
+                            margin-top: 4px;
+                            line-height: 1;
+                        }
+                        
+                        .session-info {
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+                        }
+                        
+                        .session-info h4 {
+                            color: white;
+                            font-size: 14px;
+                            font-weight: 600;
+                            margin-bottom: 4px;
+                            line-height: 1.2;
+                            transition: all 0.3s ease;
+                        }
+                        
+                        .session-info p {
+                            color: rgba(255, 255, 255, 0.7);
+                            font-size: 12px;
+                            margin: 0;
+                            text-transform: capitalize;
+                            transition: all 0.3s ease;
+                        }
+                        
+                        
+                        .session-item.selected .session-info h4 {
+                            font-size: 16px;
+                            font-weight: 700;
+                            color: #ffffff;
+                            margin-bottom: 6px;
+                        }
+                        
+                        .session-item.selected .session-info p {
+                            font-size: 13px;
+                            color: rgba(255, 255, 255, 0.9);
+                            font-weight: 500;
+                        }
+                        
+                        .session-item.selected .session-time .time {
+                            font-size: 16px;
+                            font-weight: 700;
+                            color: #ffffff;
+                        }
+                        
+                        .session-item.selected .session-order {
+                            background: rgba(255, 255, 255, 0.3);
+                            color: white;
+                            font-weight: 700;
+                            padding: 3px 8px;
+                            font-size: 11px;
+                        }
+                        
+                        
+                        .session-item.selected::after {
+                            content: '✓';
+                            position: absolute;
+                            top: -5px;
+                            right: -5px;
+                            background: linear-gradient(45deg, #10b981, #059669);
+                            color: white;
+                            font-size: 12px;
+                            font-weight: 700;
+                            width: 24px;
+                            height: 24px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+                            z-index: 15;
+                            animation: selectedPulse 2s infinite;
+                        }
+                        
+                        @keyframes selectedPulse {
+                            0%, 100% { transform: scale(1); }
+                            50% { transform: scale(1.1); }
+                        }
+                        
+                        .mobile-session-delete {
+                            background: rgba(220, 38, 38, 0.1);
+                            border: 1px solid rgba(220, 38, 38, 0.2);
+                            color: rgba(255, 107, 107, 0.8);
+                            cursor: pointer;
+                            padding: 8px;
+                            margin-left: 10px;
+                            border-radius: 8px;
+                            font-size: 12px;
+                            opacity: 1;
+                            transition: all 0.3s ease;
+                            flex-shrink: 0;
+                            position: relative;
+                            min-width: 32px;
+                            min-height: 32px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-weight: 600;
+                        }
+                        
+                        
+                        .mobile-session-delete::before {
+                            content: '×';
+                            font-size: 16px;
+                            font-weight: 700;
+                            line-height: 1;
+                            position: absolute;
+                            color: inherit;
+                        }
+                        
+                        .mobile-session-delete i {
+                            position: relative;
+                            z-index: 1;
+                        }
+                        
+                        
+                        .mobile-session-delete {
+                            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+                        }
+                        
+                        .session-item:hover .mobile-session-delete {
+                            opacity: 1;
+                            background: rgba(220, 38, 38, 0.2);
+                            color: #ff6b6b;
+                            transform: scale(1.05);
+                            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+                        }
+                        
+                        
+                        .session-item.selected .mobile-session-delete {
+                            opacity: 1;
+                            background: rgba(220, 38, 38, 0.15);
+                            color: #ff6b6b;
+                            border: 1px solid rgba(220, 38, 38, 0.3);
+                            padding: 10px;
+                            font-size: 14px;
+                            min-width: 36px;
+                            min-height: 36px;
+                            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+                        }
+                        
+                        .mobile-session-delete:hover {
+                            background: rgba(220, 38, 38, 0.3);
+                            color: #ffffff;
+                            transform: scale(1.1);
+                            box-shadow: 0 3px 12px rgba(220, 38, 38, 0.4);
+                            border-color: rgba(220, 38, 38, 0.5);
+                        }
+                        
+                        .session-item.selected .mobile-session-delete:hover {
+                            background: rgba(220, 38, 38, 0.3);
+                            color: #ffffff;
+                            transform: scale(1.15);
+                            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+                        }
+                        
+                        
+                        .today-sessions {
+                            counter-reset: session-counter;
+                        }
+                        
+                        .session-item::before {
+                            counter-increment: session-counter;
+                            content: counter(session-counter);
+                            position: absolute;
+                            top: -8px;
+                            left: -8px;
+                            background: linear-gradient(45deg, #667eea, #764ba2);
+                            color: white;
+                            font-size: 10px;
+                            font-weight: 700;
+                            width: 20px;
+                            height: 20px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+                        }
+                    }
+                `;
+                
+                document.head.appendChild(styles);
+            }
+            
+            addDeleteConfirmationStyles() {
+                if (document.getElementById('delete-confirmation-styles')) return;
+                
+                const styles = document.createElement('style');
+                styles.id = 'delete-confirmation-styles';
+                styles.textContent = `
+                    .delete-confirmation-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.8);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 10001;
+                        animation: fadeIn 0.3s ease;
+                    }
+                    
+                    .delete-confirmation-modal {
+                        background: linear-gradient(145deg, #1a1a3e 0%, #2d1b69 100%);
+                        border-radius: 20px;
+                        padding: 0;
+                        max-width: 450px;
+                        width: 90%;
+                        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        animation: slideUp 0.3s ease;
+                    }
+                    
+                    .delete-confirmation-header {
+                        background: linear-gradient(45deg, #dc2626, #b91c1c);
+                        color: white;
+                        padding: 20px;
+                        border-radius: 20px 20px 0 0;
+                        text-align: center;
+                    }
+                    
+                    .delete-confirmation-header h3 {
+                        margin: 0;
+                        font-size: 18px;
+                        font-weight: 600;
+                    }
+                    
+                    .delete-confirmation-body {
+                        padding: 25px;
+                        color: #e2e8f0;
+                        text-align: center;
+                    }
+                    
+                    .delete-confirmation-body p {
+                        margin: 0 0 15px 0;
+                        font-size: 16px;
+                    }
+                    
+                    .session-preview {
+                        background: rgba(255, 255, 255, 0.1);
+                        border-radius: 12px;
+                        padding: 15px;
+                        margin: 20px 0;
+                        border-left: 4px solid #dc2626;
+                    }
+                    
+                    .session-preview strong {
+                        color: white;
+                        font-size: 16px;
+                    }
+                    
+                    .session-preview span {
+                        color: rgba(226, 232, 240, 0.8);
+                        font-size: 14px;
+                        display: block;
+                        margin-top: 5px;
+                    }
+                    
+                    .warning-text {
+                        color: #fbbf24;
+                        font-size: 14px;
+                        font-weight: 500;
+                        margin-top: 15px;
+                    }
+                    
+                    .delete-confirmation-actions {
+                        display: flex;
+                        gap: 15px;
+                        padding: 0 25px 25px 25px;
+                    }
+                    
+                    .delete-confirmation-actions .btn {
+                        flex: 1;
+                        padding: 12px 20px;
+                        border: none;
+                        border-radius: 10px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        font-size: 14px;
+                    }
+                    
+                    .btn-secondary {
+                        background: rgba(255, 255, 255, 0.1);
+                        color: #e2e8f0;
+                        border: 1px solid rgba(255, 255, 255, 0.2);
+                    }
+                    
+                    .btn-secondary:hover {
+                        background: rgba(255, 255, 255, 0.2);
+                        transform: translateY(-1px);
+                    }
+                    
+                    .btn-danger {
+                        background: linear-gradient(45deg, #dc2626, #b91c1c);
+                        color: white;
+                        box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+                    }
+                    
+                    .btn-danger:hover {
+                        background: linear-gradient(45deg, #b91c1c, #991b1b);
+                        transform: translateY(-1px);
+                        box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+                    }
+                    
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    
+                    @keyframes slideUp {
+                        from { 
+                            opacity: 0;
+                            transform: translateY(30px) scale(0.9);
+                        }
+                        to { 
+                            opacity: 1;
+                            transform: translateY(0) scale(1);
+                        }
+                    }
+                `;
+                
+                document.head.appendChild(styles);
+            }
+            
+            editSession(sessionId) {
+                
+                this.closeSessionDetails();
+                
+                
+                const session = this.sessions.find(s => s.id === sessionId);
+                if (!session) return;
+                
+                
+                this.openScheduleModal();
+                
+                
+                setTimeout(() => {
+                    document.getElementById('sessionTitle').value = session.title;
+                    document.getElementById('sessionDate').value = session.date;
+                    document.getElementById('sessionTime').value = session.time;
+                    document.getElementById('sessionDuration').value = session.duration;
+                    document.getElementById('sessionLocation').value = session.location;
+                    document.getElementById('sessionGroup').value = session.group;
+                    document.getElementById('sessionDescription').value = session.description;
+                    
+                    
+                    const typeCards = document.querySelectorAll('.session-type-card');
+                    typeCards.forEach(card => {
+                        if (card.dataset.type === session.type) {
+                            this.selectSessionType(session.type);
+                        }
+                    });
+                    
+                    
+                    document.getElementById('scheduleForm').dataset.editingSessionId = sessionId;
+                }, 100);
+                
+                this.showNotification('Session opened for editing', 'info');
+            }
+            
+            closeSessionDetails() {
+                const modal = document.getElementById('sessionDetailsModal');
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        
+        class MobileNavigation {
+            constructor() {
+                this.overlay = document.getElementById('mobileNavOverlay');
+                this.toggle = document.getElementById('navToggle');
+                this.close = document.getElementById('mobileNavClose');
+                this.isOpen = false;
+                this.init();
+            }
+            
+            init() {
+                if (this.toggle) {
+                    this.toggle.addEventListener('click', (e) => {
+                        e.preventDefault(); e.stopPropagation(); this.toggleMenu();
+                    });
+                }
+                if (this.close) {
+                    this.close.addEventListener('click', (e) => {
+                        e.preventDefault(); this.closeMenu();
+                    });
+                }
+                if (this.overlay) {
+                    this.overlay.addEventListener('click', (e) => {
+                        if (e.target === this.overlay) this.closeMenu();
+                    });
+                }
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.isOpen) this.closeMenu();
+                });
+                const navLinks = this.overlay?.querySelectorAll('.mobile-nav-link');
+                navLinks?.forEach(link => {
+                    link.addEventListener('click', () => this.closeMenu());
+                });
+            }
+            
+            toggleMenu() { this.isOpen ? this.closeMenu() : this.openMenu(); }
+            
+            openMenu() {
+                if (!this.overlay) return;
+                this.isOpen = true;
+                this.overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            closeMenu() {
+                if (!this.overlay) return;
+                this.isOpen = false;
+                this.overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            new MobileNavigation();
+            window.scheduleManager = new ScheduleManager();
+            
+            
+            window.scheduleManager.addSessionDeleteButtonStyles();
+            window.scheduleManager.addMobileSessionStyles();
+        });
+    </script>
+    
+    <script src="../js/script.js"></script>
+</body>
+</html>
+
+

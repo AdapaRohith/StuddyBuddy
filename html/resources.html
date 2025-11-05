@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyBuddy - Resources</title>
+    
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            overflow-x: hidden;
+        }
+        
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #2d1b69 100%);
+            background-attachment: fixed;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        
+        @supports not (backdrop-filter: blur(12px)) {
+            .mobile-nav-overlay {
+                background: linear-gradient(135deg, rgba(15, 15, 35, 0.95) 0%, rgba(26, 26, 62, 0.95) 50%, rgba(45, 27, 105, 0.95) 100%);
+            }
+        }
+        
+        
+        .mobile-nav-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(15, 15, 35, 0.3) 0%, rgba(26, 26, 62, 0.2) 50%, rgba(45, 27, 105, 0.3) 100%);
+            z-index: -1;
+        }
+        
+        .mobile-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .mobile-nav-menu {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1a1a3e 0%, #2d1b69 100%);
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            z-index: 10000;
+        }
+        
+        .mobile-nav-overlay.active .mobile-nav-menu {
+            right: 0;
+        }
+        
+        .mobile-nav-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .mobile-nav-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        
+        .mobile-nav-close {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mobile-nav-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .mobile-nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .mobile-nav-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            gap: 15px;
+            min-height: 60px;
+        }
+        
+        .mobile-nav-link:hover,
+        .mobile-nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            transform: translateX(5px);
+        }
+        
+        .mobile-nav-link i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+            color: #667eea;
+        }
+        
+        .mobile-nav-link span {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        
+        
+        @media (max-width: 992px) {
+            .main-nav .nav-list {
+                display: none !important;
+            }
+            
+            .nav-toggle {
+                display: block !important;
+                background: none;
+                border: none;
+                color: #ffffff;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 12px;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                width: 48px;
+                height: 48px;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .nav-toggle:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: scale(1.1);
+            }
+            
+            .mobile-nav-overlay {
+                display: block;
+            }
+            
+            .site-header {
+                flex-wrap: wrap;
+                gap: 1rem;
+                padding: 1rem 1.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .page-content {
+                padding: 1rem !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .site-header {
+                padding: 0.8rem 1rem;
+            }
+            
+            .mobile-nav-menu {
+                width: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="site-container">
+        <header class="site-header">
+            <div class="logo">
+                <i class="fa-solid fa-user-graduate"></i> <h1>StudyBuddy</h1>
+            </div>
+            <p class="slogan">Collaborate. Learn. Achieve.</p>
+            
+            
+            <div class="auth-section" id="authSection">
+                <button class="btn-auth btn-login" id="loginBtn">
+                    <i class="fa-solid fa-sign-in-alt"></i>
+                    <span>Login</span>
+                </button>
+                <button class="btn-auth btn-signup" id="signupBtn">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Sign Up</span>
+                </button>
+            </div>
+
+            
+            <div class="user-section" id="userSection" style="display: none;">
+                <div class="user-profile">
+                    <img src="https://via.placeholder.com/40" alt="User Avatar">
+                    <div class="user-info">
+                        <span class="user-name">John Doe</span>
+                        <span class="user-email">john@email.com</span>
+                    </div>
+                    <div class="user-dropdown">
+                        <button class="dropdown-toggle" id="userDropdown">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="profile.html" class="dropdown-item">
+                                <i class="fa-solid fa-user"></i> My Profile
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fa-solid fa-cog"></i> Settings
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fa-solid fa-bell"></i> Notifications
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item logout-item" id="logoutBtn">
+                                <i class="fa-solid fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="../index.html" class="nav-link">
+                            <i class="fa-solid fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="groups.html" class="nav-link">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Groups</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="resources.html" class="nav-link active">
+                            <i class="fa-solid fa-folder"></i>
+                            <span>Resources</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="schedule.html" class="nav-link">
+                            <i class="fa-solid fa-calendar"></i>
+                            <span>Schedule</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="profile.html" class="nav-link">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                </ul>
+                <button class="nav-toggle" id="navToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </nav>
+        </header>
+
+        
+        <div class="mobile-nav-overlay" id="mobileNavOverlay">
+            <div class="mobile-nav-menu">
+                <div class="mobile-nav-header">
+                    <span class="mobile-nav-title">StudyBuddy Menu</span>
+                    <button class="mobile-nav-close" id="mobileNavClose">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                </div>
+                
+                <ul class="mobile-nav-list">
+                    <li class="mobile-nav-item">
+                        <a href="../index.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="groups.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Groups</span>
+                        </a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="resources.html" class="mobile-nav-link active">
+                            <i class="fa-solid fa-folder"></i>
+                            <span>Resources</span>
+                        </a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="schedule.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-calendar"></i>
+                            <span>Schedule</span>
+                        </a>
+                    </li>
+                    <li class="mobile-nav-item">
+                        <a href="profile.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <main class="dashboard">
+            <div class="page-content">
+                <h1><i class="fa-solid fa-folder"></i> Shared Resources</h1>
+                
+                <div class="resources-grid">
+                    <div class="card resource-category">
+                        <h3><i class="fa-solid fa-file-pdf"></i> Documents</h3>
+                        <div class="resource-list">
+                            <div class="resource-item" data-file="Fluid_Dynamics.pdf">
+                                <i class="fa-solid fa-file-pdf pdf-icon"></i>
+                                <div class="file-info">
+                                    <span class="file-name">Fluid_Dynamics.pdf</span>
+                                    <span class="file-details">2.4 MB • Shared by John</span>
+                                </div>
+                                <div class="resource-actions">
+                                    <button class="btn-view" title="View Fluid_Dynamics.pdf">
+                                        <i class="fa-solid fa-eye"></i>
+                                        <span class="action-text">View</span>
+                                    </button>
+                                    <button class="btn-download" title="Download Fluid_Dynamics.pdf">
+                                        <i class="fa-solid fa-download"></i>
+                                        <span class="download-text">Download</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="resource-item" data-file="Circuit_Analysis.docx">
+                                <i class="fa-solid fa-file-word" style="color: #2b579a;"></i>
+                                <div class="file-info">
+                                    <span class="file-name">Circuit_Analysis.docx</span>
+                                    <span class="file-details">1.8 MB • Shared by Sarah</span>
+                                </div>
+                                <div class="resource-actions">
+                                    <button class="btn-view" title="View Circuit_Analysis.docx">
+                                        <i class="fa-solid fa-eye"></i>
+                                        <span class="action-text">View</span>
+                                    </button>
+                                    <button class="btn-download" title="Download Circuit_Analysis.docx">
+                                        <i class="fa-solid fa-download"></i>
+                                        <span class="download-text">Download</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card resource-category">
+                        <h3><i class="fa-solid fa-code"></i> Code Files</h3>
+                        <div class="resource-list">
+                            <div class="resource-item" data-file="Heat_Transfer.py">
+                                <i class="fa-brands fa-python py-icon"></i>
+                                <div class="file-info">
+                                    <span class="file-name">Heat_Transfer.py</span>
+                                    <span class="file-details">15 KB • Shared by Mike</span>
+                                </div>
+                                <div class="resource-actions">
+                                    <button class="btn-view" title="View Heat_Transfer.py">
+                                        <i class="fa-solid fa-eye"></i>
+                                        <span class="action-text">View</span>
+                                    </button>
+                                    <button class="btn-download" title="Download Heat_Transfer.py">
+                                        <i class="fa-solid fa-download"></i>
+                                        <span class="download-text">Download</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="resource-item" data-file="calculator.js">
+                                <i class="fa-brands fa-js-square" style="color: #f7df1e;"></i>
+                                <div class="file-info">
+                                    <span class="file-name">calculator.js</span>
+                                    <span class="file-details">8 KB • Shared by Alex</span>
+                                </div>
+                                <div class="resource-actions">
+                                    <button class="btn-view" title="View calculator.js">
+                                        <i class="fa-solid fa-eye"></i>
+                                        <span class="action-text">View</span>
+                                    </button>
+                                    <button class="btn-download" title="Download calculator.js">
+                                        <i class="fa-solid fa-download"></i>
+                                        <span class="download-text">Download</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card resource-category">
+                        <h3><i class="fa-solid fa-video"></i> Video Lectures</h3>
+                        <div class="resource-list">
+                            <div class="resource-item" data-file="Thermodynamics_Lecture_1.mp4">
+                                <i class="fa-solid fa-play-circle" style="color: #ff6b6b;"></i>
+                                <div class="file-info">
+                                    <span class="file-name">Thermodynamics_Lecture_1.mp4</span>
+                                    <span class="file-details">120 MB • 45 min • Shared by Prof. Smith</span>
+                                </div>
+                                <div class="video-actions">
+                                    <button class="btn-play" title="Play Video">
+                                        <i class="fa-solid fa-play"></i>
+                                        <span class="action-text">Play</span>
+                                    </button>
+                                    <button class="btn-download" title="Download Thermodynamics_Lecture_1.mp4">
+                                        <i class="fa-solid fa-download"></i>
+                                        <span class="download-text">Download</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upload-section">
+                    <button class="btn-upload" id="uploadBtn" onclick="testUploadModal()">
+                        <i class="fa-solid fa-cloud-upload-alt"></i>
+                        Upload New Resource
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        
+        <div class="upload-modal-overlay" id="uploadModal" style="display: none;">
+            <div class="upload-modal">
+                <div class="upload-modal-header">
+                    <h2><i class="fa-solid fa-cloud-upload-alt"></i> Upload New Resource</h2>
+                    <button class="modal-close" id="closeUploadModal">&times;</button>
+                </div>
+                
+                <div class="upload-modal-body">
+                    <div class="upload-step" id="step1">
+                        <h3>Step 1: Choose Category</h3>
+                        <div class="category-selection">
+                            <div class="category-option" data-category="documents">
+                                <i class="fa-solid fa-file-pdf"></i>
+                                <h4>Documents</h4>
+                                <p>PDFs, Word docs, PowerPoint presentations</p>
+                                <div class="supported-formats">
+                                    <span class="format-tag">.pdf</span>
+                                    <span class="format-tag">.doc</span>
+                                    <span class="format-tag">.docx</span>
+                                    <span class="format-tag">.ppt</span>
+                                    <span class="format-tag">.pptx</span>
+                                    <span class="format-tag">.txt</span>
+                                </div>
+                            </div>
+                            
+                            <div class="category-option" data-category="code">
+                                <i class="fa-solid fa-code"></i>
+                                <h4>Code Files</h4>
+                                <p>Programming files, scripts, notebooks</p>
+                                <div class="supported-formats">
+                                    <span class="format-tag">.py</span>
+                                    <span class="format-tag">.js</span>
+                                    <span class="format-tag">.html</span>
+                                    <span class="format-tag">.css</span>
+                                    <span class="format-tag">.java</span>
+                                    <span class="format-tag">.cpp</span>
+                                    <span class="format-tag">.ipynb</span>
+                                </div>
+                            </div>
+                            
+                            <div class="category-option" data-category="videos">
+                                <i class="fa-solid fa-video"></i>
+                                <h4>Video Lectures</h4>
+                                <p>Educational videos, recorded lectures</p>
+                                <div class="supported-formats">
+                                    <span class="format-tag">.mp4</span>
+                                    <span class="format-tag">.avi</span>
+                                    <span class="format-tag">.mkv</span>
+                                    <span class="format-tag">.mov</span>
+                                    <span class="format-tag">.wmv</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="upload-step" id="step2" style="display: none;">
+                        <h3>Step 2: Upload File</h3>
+                        <div class="selected-category-info">
+                            <i id="selectedCategoryIcon" class="fa-solid fa-file"></i>
+                            <span id="selectedCategoryName">Category</span>
+                        </div>
+                        
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <div class="upload-placeholder">
+                                <i class="fa-solid fa-cloud-upload-alt"></i>
+                                <h4>Drag & Drop your file here</h4>
+                                <p>or <button class="btn-browse" id="browseBtn">Browse Files</button></p>
+                                <input type="file" id="fileInput" style="display: none;" accept="">
+                            </div>
+                        </div>
+
+                        <div class="file-details" id="fileDetails" style="display: none;">
+                            <div class="file-preview">
+                                <i id="fileIcon" class="fa-solid fa-file"></i>
+                                <div class="file-info-upload">
+                                    <span id="fileName">filename.ext</span>
+                                    <span id="fileSize">0 KB</span>
+                                </div>
+                                <button class="btn-remove-file" id="removeFile">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="upload-form">
+                                <div class="form-group">
+                                    <label for="fileTitle">Resource Title *</label>
+                                    <input type="text" id="fileTitle" placeholder="Give your resource a descriptive title">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="fileDescription">Description (Optional)</label>
+                                    <textarea id="fileDescription" placeholder="Add a brief description to help others understand this resource"></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="fileTags">Tags (Optional)</label>
+                                    <input type="text" id="fileTags" placeholder="Add comma-separated tags (e.g., thermodynamics, physics, engineering)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="format-warning" id="formatWarning" style="display: none;">
+                            <i class="fa-solid fa-exclamation-triangle"></i>
+                            <div class="warning-content">
+                                <h4>Unsupported File Format</h4>
+                                <p id="warningMessage">This file format is not supported for the selected category.</p>
+                                <div class="warning-actions">
+                                    <button class="btn btn-change-category" id="changeCategoryBtn">Choose Different Category</button>
+                                    <button class="btn btn-convert" id="convertBtn">Convert File</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="upload-actions">
+                            <button class="btn btn-back" id="backBtn">
+                                <i class="fa-solid fa-arrow-left"></i> Back
+                            </button>
+                            <button class="btn btn-upload-file" id="uploadFileBtn" disabled>
+                                <i class="fa-solid fa-upload"></i> Upload Resource
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="auth-modal-overlay" id="loginModal" style="display: none;">
+            <div class="auth-modal">
+                <div class="auth-modal-header">
+                    <h2><i class="fa-solid fa-sign-in-alt"></i> Welcome Back</h2>
+                    <button class="modal-close" id="closeLoginModal">&times;</button>
+                </div>
+                
+                <div class="auth-modal-body">
+                    <form class="auth-form" id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail">
+                                <i class="fa-solid fa-envelope"></i> Email Address
+                            </label>
+                            <input type="email" id="loginEmail" name="email" required 
+                                   placeholder="Enter your email address">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword">
+                                <i class="fa-solid fa-lock"></i> Password
+                            </label>
+                            <div class="password-input-group">
+                                <input type="password" id="loginPassword" name="password" required 
+                                       placeholder="Enter your password">
+                                <button type="button" class="password-toggle" id="toggleLoginPassword">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="rememberMe">
+                                <span>Remember me</span>
+                            </label>
+                            <a href="#" class="forgot-password">Forgot Password?</a>
+                        </div>
+                        
+                        <button type="submit" class="btn-auth-submit">
+                            <i class="fa-solid fa-sign-in-alt"></i> Log In
+                        </button>
+                    </form>
+                    
+                    <div class="auth-footer">
+                        <p>Don't have an account? 
+                            <button class="link-btn" id="switchToSignup">Sign up here</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="auth-modal-overlay" id="signupModal" style="display: none;">
+            <div class="auth-modal">
+                <div class="auth-modal-header">
+                    <h2><i class="fa-solid fa-user-plus"></i> Join StudyBuddy</h2>
+                    <button class="modal-close" id="closeSignupModal">&times;</button>
+                </div>
+                
+                <div class="auth-modal-body">
+                    <form class="auth-form" id="signupForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="signupFirstName">
+                                    <i class="fa-solid fa-user"></i> First Name
+                                </label>
+                                <input type="text" id="signupFirstName" name="firstName" required 
+                                       placeholder="Enter your first name">
+                            </div>
+                            <div class="form-group">
+                                <label for="signupLastName">
+                                    <i class="fa-solid fa-user"></i> Last Name
+                                </label>
+                                <input type="text" id="signupLastName" name="lastName" required 
+                                       placeholder="Enter your last name">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signupEmail">
+                                <i class="fa-solid fa-envelope"></i> Email Address
+                            </label>
+                            <input type="email" id="signupEmail" name="email" required 
+                                   placeholder="Enter your email address">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signupPassword">
+                                <i class="fa-solid fa-lock"></i> Password
+                            </label>
+                            <div class="password-input-group">
+                                <input type="password" id="signupPassword" name="password" required 
+                                       placeholder="Create a strong password">
+                                <button type="button" class="password-toggle" id="toggleSignupPassword">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength">
+                                <div class="strength-bar" id="strengthBar"></div>
+                                <span class="strength-text" id="strengthText">Password strength</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">
+                                <i class="fa-solid fa-lock"></i> Confirm Password
+                            </label>
+                            <div class="password-input-group">
+                                <input type="password" id="confirmPassword" name="confirmPassword" required 
+                                       placeholder="Confirm your password">
+                                <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="studyField">
+                                <i class="fa-solid fa-graduation-cap"></i> Field of Study
+                            </label>
+                            <select id="studyField" name="studyField" required>
+                                <option value="">Select your field of study</option>
+                                <option value="engineering">Engineering</option>
+                                <option value="medicine">Medicine</option>
+                                <option value="computer-science">Computer Science</option>
+                                <option value="mathematics">Mathematics</option>
+                                <option value="physics">Physics</option>
+                                <option value="chemistry">Chemistry</option>
+                                <option value="biology">Biology</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="agreeTerms" required>
+                                <span>I agree to the <a href="#" class="terms-link">Terms of Service</a> and <a href="#" class="privacy-link">Privacy Policy</a></span>
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn-auth-submit">
+                            <i class="fa-solid fa-user-plus"></i> Create Account
+                        </button>
+                    </form>
+                    
+                    <div class="auth-footer">
+                        <p>Already have an account? 
+                            <button class="link-btn" id="switchToLogin">Log in here</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        
+        
+        class MobileNavigation {
+            constructor() {
+                this.overlay = document.getElementById('mobileNavOverlay');
+                this.toggle = document.getElementById('navToggle');
+                this.close = document.getElementById('mobileNavClose');
+                this.isOpen = false;
+                
+                this.init();
+            }
+            
+            init() {
+                
+                if (this.toggle) {
+                    this.toggle.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.toggleMenu();
+                    });
+                }
+                
+                
+                if (this.close) {
+                    this.close.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.closeMenu();
+                    });
+                }
+                
+                
+                if (this.overlay) {
+                    this.overlay.addEventListener('click', (e) => {
+                        if (e.target === this.overlay) {
+                            this.closeMenu();
+                        }
+                    });
+                }
+                
+                
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.isOpen) {
+                        this.closeMenu();
+                    }
+                });
+                
+                
+                const navLinks = this.overlay?.querySelectorAll('.mobile-nav-link');
+                navLinks?.forEach(link => {
+                    link.addEventListener('click', () => {
+                        this.closeMenu();
+                    });
+                });
+            }
+            
+            toggleMenu() {
+                if (this.isOpen) {
+                    this.closeMenu();
+                } else {
+                    this.openMenu();
+                }
+            }
+            
+            openMenu() {
+                if (!this.overlay) return;
+                
+                this.isOpen = true;
+                this.overlay.classList.add('active');
+                
+                
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
+            }
+            
+            closeMenu() {
+                if (!this.overlay) return;
+                
+                this.isOpen = false;
+                this.overlay.classList.remove('active');
+                
+                
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+            }
+        }
+        
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            new MobileNavigation();
+        });
+    </script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+
+
